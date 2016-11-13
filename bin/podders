@@ -1,0 +1,27 @@
+#!/bin/bash
+
+killall cpulimit
+
+cpulimit --exe /usr/bin/rtmpdump --limit 49 &
+cpulimit --exe /usr/bin/get_iplayer --limit 49 &
+cpulimit --exe /usr/local/bin/youtube-dl --limit 49 &
+cpulimit --exe /usr/bin/ffmpeg --limit 49 &
+cpulimit --exe /usr/bin/MP4Box --limit 49 &
+
+
+function print_timestamp() {
+  echo
+  echo -------------------------------------------
+  echo ----------- `date '+%Y-%m-%d %H:%M:%S'` -----------
+  echo -------------------------------------------
+}
+
+PODDERS=(/opt/podders/iplayerpodder/ /opt/podders/rinsefmpodder/ /opt/podders/ytpodder/ /opt/podders/soundcloudpodder/)
+
+for podder in ${PODDERS[@]}; do
+  print_timestamp
+  echo "Podding $podder"
+
+  cd $podder
+  ./bashpodder.shell
+done

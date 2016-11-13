@@ -1,0 +1,13 @@
+#! /usr/bin/ruby
+
+require 'soundcloud'
+
+client = SoundCloud.new({
+  :client_id     => ENV['SC_CLIENT_ID'],
+  :client_secret => ENV['SC_CLIENT_SECRET'],
+  :username      => ENV['SC_USER_LOGIN'],
+  :password      => ENV['SC_USER_PASS']
+})
+
+#print tracks
+client.get(ARGV[0], :limit => 25, :order => ARGV[1]).each { |t| puts t['permalink_url'] }

@@ -1,0 +1,6 @@
+#! /bin/sh
+
+find $DATADIR/podcasts/bbc-* -mtime +60 -exec rm {} \;
+find $DATADIR/podcasts/rinse-* -mtime +182 -exec rm {} \;
+find $DATADIR/podcasts/seder/* -mtime +10 -exec rm {} \;
+find $DATADIR/podcasts/solid-steel/* -mtime +22 -exec rm {} \;

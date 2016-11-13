@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FILE_PREFIX=$1
+shift
+
+youtube-dl --prefer-free-formats --output="$FILE_PREFIX-%(title)s.%(ext)s" --restrict-filenames --extract-audio --audio-format=mp3 "$@"

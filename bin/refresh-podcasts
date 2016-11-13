@@ -1,0 +1,13 @@
+#! /bin/bash
+
+cd $DATADIR/podcasts/
+FILES=($(ls -d */))
+
+for i in "${FILES[@]}"
+do
+   :
+   i="${i%/}"
+   echo "$i"
+
+   make-rss --source $DATADIR/podcasts/$i --config $DATADIR/podcasts/.configs/$i.yaml --base http://tings.ponthegears.net/podcasts/$i > $DATADIR/rss/$i.rss
+done

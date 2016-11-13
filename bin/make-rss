@@ -1,0 +1,64 @@
+#! /usr/bin/ruby
+require 'optparse'
+require 'rss/2.0'
+require 'mp3info'
+require 'rss/maker'
+require 'uri'
+require 'yaml'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: make-rss [options]"
+
+  opts.on("-s", "--source [/path/to/source/dir]", "Source directory for music files") do |s|
+    options[:source] = s
+  end
+
+  opts.on("-c", "--config [/path/to/conf.yaml]", "Config file for this directory") do |c|
+    options[:config] = c
+  end
+
+  opts.on("-b", "--base-uri [http://base-uri.com/etc/]", "Base URI") do |b|
+    options[:base] = b
+  end
+
+end.parse!
+
+if (options[:config].nil? || options[:source].nil? || options[:base].nil?)
+  exit
+end
+
+files = Dir.glob(options[:source] + '/*.mp*')
+config = YAML.load_file(options[:config])
+
+content = RSS::Maker.make('2.0') do |m|
+  m.channel.title = config['title'] || 'ASS'
+  m.channel.description = config['description'] || 'ASS'
+  m.channel.link = config['link'] || 'HTTP://ASS.COM'
+  m.channel.language = config['language'] || 'en-us'
+  m.channel.about = config['about'] || 'THIS IS AN ASS'
+  m.items.do_sort = true # sort items by date
+  m.channel.updated = Time.now.to_s
+  m.channel.author = config['author'] || 'DR. ASS'
+
+  m.image.url = config['image'] || 'http://tings.ponthegears.net/podcasts/nuts.jpg'
+  m.image.title = config['title']
+
+  for file in files
+    item = m.items.new_item
+    item.title = File.basename(file, '.*')
+    link = options[:base] + '/' + URI::escape(File.basename(file))
+    item.link = link
+    item.summary = File.basename(file) + ', for justice'
+    item.date = File.mtime(file)
+
+    #item.enclosure = RSS::Rss::Channel::Item::Enclosure.new(item.link, File.size(file), 'audio/mpeg')
+
+    item.enclosure.url = item.link
+    item.enclosure.length = File.size(file)
+    item.enclosure.type = 'audio/mpeg'
+
+  end
+end
+
+puts content.to_xml
